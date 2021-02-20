@@ -141,30 +141,5 @@ public class BookDaoImpl implements BookDao {
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<Book>(Book.class), bid);
     }
 
-
-   /* @Override
-    public boolean borrow(Book books) {
-        String sql = "update books set loan=loan-1 where bid = ?";
-        int update = jdbcTemplate.update(sql, books.getBid());
-
-        return update == 1;
-    }
-
-    @Override
-    public boolean returnBook(Book books) {
-        String sql = "update books set loan=loan+1 where bid = ?";
-        int update = jdbcTemplate.update(sql, books.getBid());
-
-        return update == 1;
-    }
-
-    @Override
-    public int findLoan(int bid) {
-       *//* BookDao bookDao = new BookDaoImpl();
-      return  bookDao.findBookByBid(bid).getLoan();*//*
-        String sql = "select loan from books where bid = ?";
-        return jdbcTemplate.queryForObject(sql, Integer.class, bid);
-
-    }*/
 }
 
