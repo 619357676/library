@@ -1,0 +1,101 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录界面</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <link rel="icon" href="img/favicon.ico">
+
+
+</head>-->
+
+<script>
+    var uid;
+    $(function () {
+        $.post("findUserServlet", {}, function (e) {
+            if (e.flag) {
+                var msg = "欢迎您," + e.data.name;
+                $("#welcome").html(msg);
+                $("#login").removeClass("hidden");
+            }
+           uid = e.data.uid;
+
+        });
+        $("#userInfo").click(function(){
+            location.href="user_detail.html?uid="+uid;
+        })
+    });
+
+</script>
+
+<body>
+<div class="container" style="margin-bottom: 51px;">
+    <!--置为上方-->
+    <div style="background-color:#438ea0" class="navbar  navbar-fixed-top">
+        <!--容器-->
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" style="color:#fffdff" href="#">图书馆后台管理系统</a>
+            </div>
+            <div id="navbar" class="navbar-pills">
+                <ul style="float:right; margin-bottom: -3%" class="nav navbar-nav navbar-right">
+                    <li id="welcome" style="margin-top: 20px;"><a href="#"></a></li>
+
+                    <li id="login" class="hidden"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" id="userInfo">个人信息</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="#">修改密码</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="">切换账号</a>
+                            </li>
+                            <li role="presentation" class="divider"></li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="javascript:location.href='userExitServlet';">退出</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--margin-left: 400px;float:end;width:400px; -->
+<div>
+    <!--<div style="float:left;background-color: #ff49da;" class="container-fluid col-md-2">-->
+    <div class="">
+        <div style="background-color: #a0c0eb; width:12%" class="col-sm-2 ">
+            <ul  class="nav nav-sidebar">
+                <li class="active"><a href="user_all.html">
+                   <b>用户管理</b>
+                    <span class="sr-only">(current)</span></a></li>
+                <li><a href="user_all.html">信息管理</a></li>
+                <li><a href="role.html">角色管理</a></li>
+                <li><a href="privilege.html">权限管理</a></li>
+                <li><a href="#">借阅管理</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="main.html"><b>图书管理</b></a></li>
+                <li><a href="add_book.html">添加</a></li>
+                <li><a >删除</a></li>
+                <li><a >修改</a></li>
+
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+
+
+</body>
+<!--</html>-->

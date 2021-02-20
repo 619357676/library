@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限管理</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <link rel="icon" href="img/favicon.ico">
+</head>
+<style>
+    body {
+        background-color: #eeeeee;
+    }
+
+    th, td {
+        text-align: center;
+    }
+
+    a {
+        color: #000;
+    }
+    .table .table {
+        background-color: #eeeeee;
+    }
+    .page-header {
+        padding-bottom: 9px;
+        margin: 5px 0 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+</style>
+<script>
+    var temp="";
+
+    $(function () {
+        $.get("header.html", function (data) {
+            $("#header").html(data);
+        });
+
+        if (!temp) {//不存在
+            loadByRid(1);
+        }
+        else {
+            loadByRid(temp);
+        }
+    });
+
+    function loadRole(rid) {
+        //加载角色列表
+        $.post("findRoleServlet", function (data) {
+//
+//            alert(data[3].id);
+            var lis = '<ul class="nav nav-tabs">';
+            for (var i = 0; i < data.length; i++) {
+
+                var j = i + 1;
+                if (i === rid) {
+                    var li = '<li class="active">\n' +
+                        //                        '<input class="hiddn" name="rid1" value="' + data[i].id + '"/>' +
+                        ' <a data-toggle="tab" onclick="loadByRid(' + j + ')" href="#">\n' +
+                        '  <i></i>\n' +
+                        data[i].role_name +
+                        ' </a>\n' +
+                        ' </li>';
+                } else {
+                    var li = '<li>\n' +
+                        //                        '<input class="hiden" name="rid1" value="' + data[i].id + '"/>' +
+                        ' <a data-toggle="tab" onclick="loadByRid(' + j + ')" href="#">\n' +
+                        '  <i></i>\n' +
+                        data[i].role_name +
+                        ' </a>\n' +
+                        ' </li>';
+                }
+                lis += li;
+            }
+            lis += '    </ul>';
+
+            $("#myTab").html(lis);
+        });
+    }
+
+    function loadAllMenu(e) {
+        //加载权限列表
+        $.post("findPrivilegeServlet", function (data) {
+            var trs = '';
+            for (var i = 0; i < data.length; i++) {
+                var j = i + 1;
+                var tr = '  <tr>\n' +
+                    ' <td><input type="checkbox" name="id" value="' + data[i].id + '">' + data[i].menu_name + '</td>\n' +
+                    '<td>' + data[i].url + '</td>\n' +
+                    '  <td>' + data[i].desc + '</td>\n' +
+                    ' <td>\n' +
+                    ' <div class="action-buttons"><a class="green" data-toggle="modal"\n' +
+                    ' data-target="#updateModal"\n' +
+                    ' onclick=""><i\n' +
+                    'class=" fa fa-pencil bigger-130"></i></a></div>\n' +
+                    ' </td>\n' +
+                    '  </tr>';
+                trs += tr;
+            }
+            $("#menu").html(trs);
+
+        });
+    }
+
+
+    function loadMenu(rid) {
+        //加载某个角色权限列表
+        $.get("findAllMenuByRidServlet", {rid: rid}, function (data) {
+            for (var i = 0; i < data.length; i++) {
+                $("input[name=id][value=" + data[i].id + "]").attr("checked", true);//回显勾选按钮
+            }
+        });
+    }
+
+    function loadByRid(rid) {
+        loadRole(rid - 1);
+        loadAllMenu(rid);
+        loadMenu(rid);
+        $("#sub").html('<input type="text" class="hidden" name="rid" value="' + rid + '">');
+        temp = rid;
+
+    }
+
+
+</script>
+<body>
+<div id="header"></div>
+<br>
+<div class="container" style="float:right;margin-right:9%; ">
+    <div>
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="page-content">
+
+                    <div class="page-header">
+                        <h1>
+                            权限管理
+                            <small>
+                                <i class="ace-icon fa fa-angle-double-right"></i>
+                                为系统角色分配访问菜单...
+                            </small>
+                        </h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div>
+                                <form action="updatePrivilegeServlet" method="get">
+                                    <div id="myTab">
+                                        <!--<ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <div>
+                                                    <input class="hidden" name="rid" value=""/>
+                                                    <a data-toggle="tab" href="#faq-tab-1">
+                                                        <i></i>
+                                                        超级管理员(馆长)1
+                                                    </a>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <a data-toggle="tab" href="#faq-tab-2">
+                                                    <i></i>
+                                                    副馆长
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a data-toggle="tab" href="#faq-tab-3">
+                                                    <i></i>
+                                                    业务员
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a data-toggle="tab" href="#faq-tab-4">
+                                                    <i></i>
+                                                   主任
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a data-toggle="tab" href="#faq-tab-5">
+                                                    <i></i>
+                                                  普普通通用户
+                                                </a>
+                                            </li>
+                                        </ul>-->
+                                    </div>
+
+                                    <div id="sub"></div>
+                                    <div class="pull-right" style="margin:10px 10px">
+                                        <input type="submit" class="pull-right btn btn-primary" value="提交菜单权限配置">
+                                    </div>
+                                    <div id="list">
+                                        <div class="tab-content table table-bordered padding-24">
+                                            <div class="tab-pane fade in active">
+
+                                                <table id="treeTable" class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>权限</th>
+                                                        <th>URL</th>
+                                                        <th>描述</th>
+                                                    </tr>
+
+                                                    </thead>
+                                                    <!--<input type="text" class="hi1dden" name="rid" value="1">-->
+                                                    <tbody id="menu">
+                                                    <!-- <tr>
+                                                         <td><input type="checkbox" name="visible">后台管理</td>
+                                                         <td>null</td>
+                                                         <td>fa-th-large</td>
+                                                         <td>
+                                                             <div class="action-buttons"><a class="green"
+                                                                                            data-toggle="modal"
+                                                                                            data-target="#updateModal"
+                                                                                            onclick=""><i
+                                                                     class="ace-icon fa fa-pencil bigger-130"></i></a>
+                                                             </div>
+                                                         </td>
+                                                     </tr>-->
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

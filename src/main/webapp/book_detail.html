@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书详情</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link rel="icon" href="img/favicon.ico">
+</head>
+<style>
+    body {
+        background-color: #eeeeee;
+        /*background: url("1.png");*/
+    }
+
+    a {
+        color: #000;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    li {
+    }
+
+    img {
+        float: left;
+        margin: 30px 15px 15px 20px;
+    }
+
+    .text {
+        /*width: 340px;*/
+        float: left;
+        /*padding: 20px;*/
+        color: #ff1c25;
+        font-size: 20px;
+    }
+
+    .text p {
+        text-align: left;
+        margin-left: 20px;
+        margin-top: 25px;
+    }
+
+    .intro {
+        /*float:left;*/
+        text-indent: 2em;
+    }
+
+    .status {
+
+        font-size: 30px;
+        color: #000000;
+        margin-top: 5%;
+
+    }
+</style>
+<script>
+
+    $(function () {
+        $.get("header.html", function (data) {
+            $("#header").html(data);
+        });
+
+        //alert(search);
+        var bid = location.search.split("=")[1];
+//        var id=1;
+        $.get("bookDetailServlet", {bid: bid}, function (data) {
+
+            var li = '<li>\n' +
+                '        <img width="200" height="300" class="image" src="img/shu.jpg"/>\n' +
+                '    </div>\n' +
+                '    <div class="text">\n' +
+                '        <p>' + data[0].name + '</p>\n' +
+                '        <p>作者:' + data[0].author + '</p>\n' +
+                '        <p>出版日期:' + data[0].pubDate + '</p>\n' +
+                '        <p>出版社:' + data[0].pubHouse + '</p>\n' +
+                '        <p>总页数:' + data[0].page + '</p>\n' +
+                '        <p>分类:' + data[0].classify + '</p>\n' +
+                '        <p>数量:' + data[0].num + '</p>\n' +
+                '        <p>可借数量:' + data[0].loan + '</p>\n' +
+                '    </div>\n' +
+                '    </li>';
+
+            var int = '<p class="intro">' + data[0].introduction + '</p>';
+            if (data[0].loan > 0) {
+                $("#status").html("图书馆有此书");
+            }
+            else {
+                $("#status").html("图书馆暂无此书");
+            }
+            $("#book").html(li);
+            $("#int").html(int);
+        });
+
+        $("#borrow").click(function () {
+            $.post("borrowServlet", {bid: bid}, function (data) {
+                if (data) {
+                    alert("成功,已借阅此书");
+//                    location.reload();
+                    $("#borrow").attr("disabled", true);
+//                    $("#borrow").html("已借阅此书");
+                    location.reload();
+                }
+                else {
+                    alert("失败");
+
+                }
+            });
+        });
+        $("#return1").click(function () {
+
+            $.post("returnServlet", {bid: bid}, function (data) {
+                if (data===true) {
+                    alert("成功,已归还此书");
+
+                    $("#return1").attr("disabled", true);
+                    location.reload();
+                }
+                else {
+                    alert("失败");
+
+                }
+            });
+
+        });
+
+      /*  $.get("findBorrowInfoByIdsServlet", {bid: bid}, function (data) {
+            var lis = '';
+            for (var i = 0; i < data.length; i++) {
+                var j = i + 1;
+                var li = ' <li>' + j + '.在' + data[i].borrowTime + '借阅此书,在' + data[i].returnTime + '归还此书</li>\n' +
+                    '<li> </li>';
+                lis += li;
+            }
+            $("#record").html(lis);
+        });*/
+
+        $.get("findWhetherServlet", {bid: bid}, function (data) {
+//，true表示：已借阅，可还书， false表示：可借书，
+            if (!data) {//可借
+                $("#return1").attr("disabled", true);//可借书时，表明已还或未借过，此时禁止还书按钮
+                if (($("#status").text()) === "图书馆有此书") {
+                    $("#borrow").html("借阅此书");
+//                alert("可");
+                }
+                else {
+                    $("#borrow").attr("disabled", true);
+                }
+            }
+            else {
+                //可还书时，禁止借阅功能
+                $("#borrow").html("你已借阅此书");
+                $("#borrow").attr("disabled", true);
+            }
+
+
+        });
+
+
+    });
+
+</script>
+
+<body>
+<div id="header">
+
+</div>
+<div><h2 style="text-align: center;">图书详情</h2>
+</div>
+
+<!--<form action="bookDetailServlet" method="get">
+    <input type="text" name="bid">
+    <input type="submit" value="tijiao">
+
+</form>-->
+
+<div style="background-color: #35d5d4;" class="container">
+
+    <div>
+        <ul id="book">
+            <!--  <li>序号:1<br>
+              书名:《论十大关系》导读<br>
+              作者:艾四林总主编<br>
+              出版日期:2018-06-01<br>
+              出版社:北京：中国民主法制出版社<br>
+              总页数:179<br>
+              分类:马克思主义、列宁主义、毛泽东思想、邓小平理论<br>
+              中图分类号:A841.26<br>
+              简介:《论十大关系》初步总结了我国社会主义建设的经验，提出了探索适合中国国情的社会主义建设道路的任务，是毛泽东关于社会主义建设问题的代表作，反映了第一代中央领导集体对于适合中国国情的社会主义道路的认识和探索，标志着以毛泽东为代表的中共领导人对中国社会主义道路的探索开始形成了一个初步的但是较为系统的思路。
+              </li>-->
+        </ul>
+    </div>
+    <div style="float:left;margin-left: 130px;">
+        <div style="margin-left: 30px;">
+            <div class="status" id="status">
+                图书馆有此书,图书馆暂无此书
+            </div>
+
+            <button id="borrow" type="button" class="btn btn-primary " style="margin-bottom: 0%;margin-top: 5%">借阅此书
+            </button>
+            <button id="return1" type="button" class="btn btn-primary " style="margin-bottom: 0%;margin-top: 5%">归还此书
+            </button>
+        </div>
+        <div>
+            <div><h3 style="color:#ac2c8e;margin-left: 20px;">您的借阅记录</h3></div>
+            <br>
+
+            <ul id="record">
+                <li>暂未开放</li>
+
+            </ul>
+
+        </div>
+    </div>
+
+    <!-- <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>
+     <h1>感谢</h1>-->
+
+</div>
+<br>
+<div id="int1" style="background-color: #ffffff" class="container ">
+    <h4>简介</h4>
+    <hr style="border:2px solid red"/>
+    <div id="int" class="intro">
+        <!--<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;暂无</p>-->
+        <p style="text-indent: 2em;">暂无</p>
+    </div>
+    <hr style="border:2px solid red"/>
+</div>
+</body>
+</html>

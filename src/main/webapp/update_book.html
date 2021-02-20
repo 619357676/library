@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改图书</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link rel="icon" href="img/favicon.ico">
+</head>
+<script src="js/getParameter.js"></script>
+<script>
+    $(function(){
+        $.get("header.html", function (data) {
+            $("#header").html(data);
+        });
+
+        var bid = getParameter("bid");
+        $.get("findBookByIdServlet",{bid:bid},function (data) {
+                            $("#bid").val(data.bid);
+                            $("#name").val(data.name);
+                            $("#author").val(data.author);
+                            $("#pubDate").val(data.pubDate);
+                            $("#pubHouse").val(data.pubHouse);
+                            $("#page").val(data.page);
+                            $("#clc").val(data.clc);
+                            $("#num").val(data.num);
+                            $("#loan").val(data.loan);
+                            $("#introduction").val(data.introduction);
+                             $("#classify").val(data.classify);
+//                            $("#classify").get(0).value=data.classify;
+            /*   var count = $("#classify")[0].options.length;
+            for (var i = 0; i < count; i++) {
+                   if ($("#classify")[0].options[i].val === data.classify) {
+                       $("#classify").get(0).options[i].selected = true;
+                       break;}
+               }*/
+        });
+    });
+</script>
+<body style="background-color: #eeeeee">
+<div id="header"></div>
+
+
+<div class="container">
+
+    <h2 style="text-align: center">修改图书信息</h2>
+    <form action="updateBookServlet" method="post">
+        <input  type="hidden" id="bid" name="bid">
+        <div class="form-group">
+            <label>书名</label>
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div>
+            作者
+            <input type="text" class="form-control" id="author" name="author">
+        </div>
+        <div>
+            出版日期
+            <input type="date" class="form-control" id="pubDate" name="pubDate">
+        </div>
+        <div>
+            出版社
+            <input type="text" class="form-control" id="pubHouse" name="pubHouse">
+        </div>
+        <div>
+            总页数
+            <input type="text" class="form-control" id="page" name="page">
+        </div>
+        <div>
+            分类
+            <!--<input type="text" class="form-control" name="classify" placeholder="请输入分类">-->
+            <select id="classify" name="classify" class="form-control">
+
+                <option>请选择</option>
+                <option value="马克思主义、列宁主义、毛泽东思想、邓小平理论">马克思主义、列宁主义、毛泽东思想、邓小平理论</option>
+                <option value="哲学、宗教">哲学、宗教</option>
+                <option value="政治、法律">政治、法律</option>
+                <option value="军事">军事</option>
+                <option value="经济">经济</option>
+                <option value="文化、科学、教育、体育">文化、科学、教育、体育</option>
+                <option value="语言、文字">语言、文字</option>
+                <option value="文学">文学</option>
+
+            </select>
+        </div>
+        <div>
+            中图分类号
+            <input type="text" class="form-control" id="clc" name="clc" >
+        </div>
+
+        <div>
+            数量
+            <input type="text" class="form-control" id="num" name="num" >
+        </div>
+        <div>
+            可借数量
+            <input type="text" class="form-control" id="loan" name="loan" >
+        </div>
+        <div>
+            简介
+            <textarea class="form-control" row="3" id="introduction" name="introduction" ></textarea>
+        </div>
+        <div style="text-align: center">
+            <input class="btn btn-primary " type="submit" value="修改并保存">
+            <input class="btn btn-danger" type="reset" value="重置">
+            <a href="main.html">
+                <button  class="btn btn-default " type="button" value="返回">返回</button>
+            </a>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>

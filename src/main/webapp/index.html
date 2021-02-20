@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主界面</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/search.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link rel="icon" href="img/favicon.ico">
+    <!--<link rel="preload" href="css/bootstrap.min.css" as="style">-->
+</head>
+<style>
+    body {
+        background-color: #eeeeee;
+        /*background: url("1.png");*/
+    }
+
+    ul{
+        background-color: white;
+    }
+   /* li{
+        !*background-color: #000000;*!
+        color:#5bc0de;
+    }*/
+    .user {
+        width: 50px;
+        line-height: 26px;
+        float: right;
+        color: #ac2925;
+
+    }
+
+    .ta {
+        border-collapse: collapse !important;
+        border: 1px solid #ddd;
+    }
+
+    .bookStyle {
+        color: #ff141a;
+    }
+
+    .quan {
+        width: 1180px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+    }
+
+    .see {
+        width: 890px;
+        float: left;
+    }
+
+    .status {
+        margin-left: 330px;
+
+        /*属性设置元素的左外边距*/
+    }
+
+    .hea {
+        background-color: #73c1ee;
+        font-weight: bold;
+        height: 40px;
+        line-height: 40px;
+        padding-left: 300px;
+        margin-bottom: 25px;
+    }
+
+    .image {
+        width: 200px;
+        height: 170px;
+        float: left;
+        padding: 5px;
+        margin-left: 10px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    .checkbox {
+
+        width: 20px;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 15px;
+        line-height: 1.42857143;
+        color: #c04733;
+        background-color: #92ffd3;
+        float: left;
+    }
+
+    .button {
+        float: right;
+        margin-right: 20px;
+        margin-bottom: 20px;
+
+    }
+
+    .hint {
+        float: left;
+        font-size: 20px;
+        margin-left: 300px;
+    }
+    .select_all{
+        float: left;
+        font-size: 20px;
+
+    }
+    .text2{
+        width: 340px;
+        float: left;
+        padding: 20px;
+        color: #ff3031;
+        font-size: 14px;
+    }
+    .text2 p{
+        color: #2bacde;
+        font-size:30px;
+       text-align: center;
+    }
+</style>
+
+<script>
+
+    $(function () {
+
+        /*$.post("findUserServlet", {}, function (data) {
+            var msg = "欢迎您1,";
+            $("#welcome").html(msg);
+        });*/
+
+        var j = 1;
+        $.post("bookServlet", {}, function (data) {
+            var trs = "";
+
+            for (var i = 0; i < data.length; i++) {
+
+                var tr = '<li>\n' + ' <div id="edit' + j.toString() + '" class="hidden"><input id="dd" name="select" class="checkbox" type="checkbox"/>\n' +
+                    '                 </div>' +
+                    '    <div>\n' +
+                    '        <img class="image" src="img/shu.jpg"/>\n' +
+                    '    </div>\n' +
+                    '    <div class="text1">\n' +
+                    '        <p>' + data[i].name + '</p>\n' +
+                    '        <p>作者:' + data[i].author + '</p>\n' +
+                    '        <p>出版日期:' + data[i].pubDate + '</p>\n' +
+                    '        <p>出版社:' + data[i].pubHouse + '</p>\n' +
+                    '        <p>分类:' + data[i].classify + '</p>\n' +
+                    '    </div>\n' +'<div class="text2">\n' +
+                    '                            <p>可借</p>\n' +
+                    '                            <p><a href="book_detail.html?bid=' + data[i].bid + '">查看详情</a></p>\n' +
+                    '                        </div>'+
+                    '    </li>';
+                j++;
+
+                trs += tr;
+            }
+
+            $("#book").html(trs);
+
+        });
+
+        $("#edit_but").click(function () {
+            var value = $("#edit_but").text();
+            if (value === "编辑") {
+                $("#edit").removeClass("hidden");
+                $("#edit_update").removeClass("hidden");
+                for (var k = 1; k <= j; k++) {
+                    var l = "#edit" + k;
+                    $(l).removeClass("hidden");
+                }
+
+                this.innerHTML = "取消编辑";
+            }
+            else {
+                for (var k1 = 1; k1 <= j; k1++) {
+                    var l1 = "#edit" + k1;
+                    $(l1).addClass("hidden");
+                }
+                $("#edit").addClass("hidden");
+                $("#edit_update").addClass("hidden");
+
+                this.innerHTML = "编辑";
+            }
+
+        });
+
+        var flag = true;
+        $("#edit").click(function () {
+            alert("点击全选");
+            var name = document.getElementsByName("select");
+
+            for (var i = 0; i < name.length; i++) {
+                name[i].checked = flag;
+            }
+          flag=!flag;
+
+            getNum();
+        });
+
+        $("#edit1").click(function () {
+
+
+            getNum();
+        });
+        $('input[name="select"]').bind("click",function(){
+            {
+                getNum();
+
+            }
+        });
+
+        function getNum(){
+            var msg="请选择项目";
+            var text=document.getElementById("selected");
+            var name = document.getElementsByName("select");
+            var num=0;
+            for (var i = 0; i < name.length; i++) {
+                if(name[i].checked === true){
+                    num++;
+                }
+            }
+            text.innerHTML="已选择"+num+"项";
+        }
+
+
+    });
+
+
+</script>
+
+
+<body>
+
+
+<h1 style="text-align: center">图书信息</h1>
+<br>
+<div class="container">
+    
+    <div class="nav">
+        <span class="user " id="welcome">欢迎您</span>
+    </div>
+    <div class="right">
+        <a class="btn btn-primary" href="login.html">登录</a>
+        <a class="btn btn-info" href="register.html">注册</a>
+    </div>
+</div>
+<hr>
+<div class="container">
+    <div>
+
+        <div style="float: left;margin:5px;">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="exampleInputName2">书名</label>
+                    <input type="text" class="form-control" id="exampleInputName2">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail2">作者</label>
+                    <input type="email" class="form-control" id="exampleInputEmail2">
+                </div>
+
+                <button type="submit" class="btn btn-primary">查询</button>
+            </form>
+        </div>
+        <br>
+        <div style="float: right;">
+
+            <a>
+                <button id="edit_but" type="button" class="btn btn-danger">编辑</button>
+            </a>
+            <!--<form action="findBookServlet1" method="post">
+            <a>
+                <button  type="submit" class="btn btn-primary">管理图书信息</button>
+            </a>
+            </form>-->
+            <a>
+                <button  type="button" class="btn btn-info"> <a href="main.html">进入后台管理系统</a></button>
+            </a>
+        </div>
+        <br>
+        <br>
+        <!--<div id="book"></div>-->
+
+      <!--  <table class="table table-bordered">
+
+            <tr>
+                <th>书名</th>
+                <th>作者</th>
+                <th>出版日期</th>
+                <th>出版社</th>
+                <th>分类</th>
+            </tr>
+            &lt;!&ndash;id="books111"&ndash;&gt;
+            <tr>
+                <th>书名</th>
+                <th>作者</th>
+                <th>出版日期</th>
+                <th>出版社</th>
+                <th>分类</th>
+            </tr>
+        </table>-->
+
+        <div class="bookStyle">
+            <ul id="book1">
+                <!--  <li>序号:1<br>
+                  书名:《论十大关系》导读<br>
+                  作者:艾四林总主编<br>
+                  出版日期:2018-06-01<br>
+                  出版社:北京：中国民主法制出版社<br>
+                  总页数:179<br>
+                  分类:马克思主义、列宁主义、毛泽东思想、邓小平理论<br>
+                  中图分类号:A841.26<br>
+                  简介:《论十大关系》初步总结了我国社会主义建设的经验，提出了探索适合中国国情的社会主义建设道路的任务，是毛泽东关于社会主义建设问题的代表作，反映了第一代中央领导集体对于适合中国国情的社会主义道路的认识和探索，标志着以毛泽东为代表的中共领导人对中国社会主义道路的探索开始形成了一个初步的但是较为系统的思路。
+                  </li>-->
+            </ul>
+        </div>
+        <hr>
+
+    </div>
+</div>
+<div class="page_one">
+    <div class="contant">
+        <div class="xinxi clearfix">
+            <div class="left">
+
+                <div class="hea">
+                    <span>书籍列表</span>
+                    <span class="status">状态</span>
+                </div>
+                <div id="edit" class="hidden">
+                    <input name="select_all" class="checkbox" type="checkbox">
+                    <!--<div id="selected" class="hint">请选择项目</div>-->
+                    <div class="hint">请选择项目</div>
+                    <div class="button">
+                        <button type="button" class="btn btn-danger">删除选中</button>
+                    </div>
+                    <div class="button">
+                        <button class="btn btn-primary">修改</button>
+                    </div>
+                </div>
+                <ul id="book">
+                    <li>
+                        <div id="edit1" class="hidden"><input class="checkbox" type="checkbox"/>
+
+                        </div>
+
+                        <div>
+                            <img class="image" src="img/shu.jpg"/>
+                        </div>
+                        <div class="text1">
+                            <p>《论十大关系》导读</p>
+
+                            <p>作者: 艾四林总主编</p>
+                            <p>出版日期:2018-06-01</p>
+                            <p>出版社:北京：中国民主法制出版社</p>
+                            <p>分类:马克思主义、列宁主义、毛泽东思想、邓小平理论</p>
+                        </div>
+                        <div class="text2">
+                            <p>可借</p>
+                            <p>查看详情</p>
+                            <!--<p>可借数量</p>
+                            <p>可借数量</p>
+                            <p>可借数量</p>
+                            <p>可借数量</p>-->
+
+
+
+                        </div>
+
+                        <!--    <h2><span class="">《论十大关系》导读</span></h2>
+
+                            <p>作者: 艾四林总主编</p>
+                            <p>出版日期:2018-06-01</p>
+                            <p>出版社:北京：中国民主法制出版社</p>
+                            <p>总页数:179</p>
+                            <p>分类:马克思主义、列宁主义、毛泽东思想、邓小平理论</p>
+                            <p>中图分类号:A841.26</p>
+                            <p>
+                                简介:《论十大关系》初步总结了我国社会主义建设的经验，提出了探索适合中国国情的社会主义建设道路的任务，是毛泽东关于社会主义建设问题的代表作，反映了第一代中央领导集体对于适合中国国情的社会主义道路的认识和探索，标志着以毛泽东为代表的中共领导人对中国社会主义道路的探索开始形成了一个初步的但是较为系统的思路。</p>
+                       -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="quan">
+    <div class="left">
+        <ul>
+            <li>
+                <div>
+                    <img class="image" src="img/shu.jpg"/>
+                </div>
+                <div class="text1">
+                    <h2><span class="">《1论十大关系》导读</span></h2>
+                    <p>作者: 艾四林总主编</p>
+                    <p>出版日期:2018-06-01</p>
+                    <p>出版社:北京：中国民主法制出版社</p>
+                    <p>总页数:179</p>
+                    <p>分类:马克思主义、列宁主义、毛泽东思想、邓小平理论</p>
+                </div>
+                <!--    <h2><span class="">《论十大关系》导读</span></h2>
+
+                    <p>作者: 艾四林总主编</p>
+                    <p>出版日期:2018-06-01</p>
+                    <p>出版社:北京：中国民主法制出版社</p>
+                    <p>总页数:179</p>
+                    <p>分类:马克思主义、列宁主义、毛泽东思想、邓小平理论</p>
+                    <p>中图分类号:A841.26</p>
+                    <p>
+                        简介:《论十大关系》初步总结了我国社会主义建设的经验，提出了探索适合中国国情的社会主义建设道路的任务，是毛泽东关于社会主义建设问题的代表作，反映了第一代中央领导集体对于适合中国国情的社会主义道路的认识和探索，标志着以毛泽东为代表的中共领导人对中国社会主义道路的探索开始形成了一个初步的但是较为系统的思路。</p>
+               -->
+            </li>
+
+
+        </ul>
+    </div>
+
+
+</div>
+
+<hr>
+
+
+</body>
+
+</html>

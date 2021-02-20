@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户详情页</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/getParameter.js"></script>
+</head>
+<style>
+    body {
+        background-color: #eeeeee;
+    }
+
+    ul {
+        list-style-type: none;
+        background-color: #0078D7;
+    }
+
+    li {
+        color: #b3fffc;
+        font-size: 25px;
+        font-family: "Times New Roman", Times, serif;
+    }
+
+    table {
+        background-color: #ffc0cb;
+        text-align: center;
+    }
+    td{
+        font-size: 20px;
+        font-family: "Times New Roman", Times, serif;
+    }
+</style>
+<script>
+
+    $(function () {
+         /* $.get("header.html", function (data) {
+              $("#header").html(data);
+          });*/
+        var uid = getParameter("uid");
+//        alert(id);
+        $.get("findUserByIdServlet", {uid: uid}, function (data) {
+            var lis = '';
+
+            var li = '<li>用户uid:' + data.uid + '</li>\n' +
+                '    <li>用户名:' + data.username + '</li>\n' +
+                '    <li>密码:' + data.password + '</li>\n' +
+                '    <li>姓名:' + data.name + '</li>\n' +
+                '    <li>邮箱:' + data.email + '</li>\n' +
+                '    <li>手机号:' + data.tel + '</li>\n' +
+                '    <li>性别:' + data.sex + '</li>\n';
+
+
+            $("#user").html(li);
+
+        });
+
+        $.get("findBorrowInfoServlet", {uid: uid}, function (data) {
+            var tables = ' <table class="table table-bordered">\n' +
+                '            <tr>\n' +
+                '                <td>借阅记录序号</td>\n' +
+                '                <td>借阅书籍</td>\n' +
+                '                <td>借阅时间</td>\n' +
+                '                <td>还书时间</td>\n' +
+                '            </tr>';
+            for (var i = 0; i < data.length; i++) {
+                 tables  +=
+                    '            <tr>\n' +
+                    '                <td>' + data[i].record + '</td>\n' +
+                    '                <td><a href="book_detail.html?bid='+data[i].bid+'">' + data[i].bid + '</a></td>\n' +
+                    '                <td>' + data[i].borrowTime + '</td>\n' +
+                    '                <td>' + data[i].returnTime + '</td>\n' +
+                    '            </tr>\n';
+//                tables += table;
+            }
+            tables += '</table>';
+            $("#info").html(tables);
+        });
+    });
+</script>
+
+<body>
+<div id="header">
+
+</div>
+<div class="container">
+    <h2>用户基本信息</h2>
+    <ul id="user">
+        <li> 用户名: zs</li>
+        <li> 姓名: 张三</li>
+        <li>性别: 男</li>
+        <li>用户uid: 1</li>
+        <li> 密码: 123</li>
+        <li> 手机号: 12345678911</li>
+        <li> 邮箱: eqweq@qq.com</li>
+
+    </ul>
+    <br>
+    <h2>用户借阅信息</h2>
+    <!-- <ul>
+         <li>借阅记录序号:</li>
+         <li>借阅书籍:</li>
+         <li>借阅时间</li>
+         <li>还书时间</li>
+
+     </ul>-->
+    <div id="info">
+        <table class="table table-bordered">
+            <tr>
+                <td>借阅记录序号</td>
+                <td>借阅书籍</td>
+                <td>借阅时间</td>
+                <td>还书时间</td>
+
+            </tr>
+        </table>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h2>用户权限信息</h2>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <hr>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    用户基本信息<br>
+
+    权限<br>
+
+    借阅记录<br>
+
+
+</div>
+</body>
+</html>

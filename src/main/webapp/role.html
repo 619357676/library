@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色管理</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <link rel="icon" href="img/favicon.ico">
+</head>
+<style>
+    body{
+        background-color: #eeeeee;
+    }
+    a {
+        color: #000;
+    }
+    th,td{
+        text-align: center;
+    }
+</style>
+<script>
+    $(function(){
+        $.get("header.html", function (data) {
+            $("#header").html(data);
+        });
+            $.post("findAllUserRoleServlet", function (data) {
+//            alert("!");
+//            var data = data1.sort(sortUsername);
+                var trs = '';
+                for (var i = 0; i < data.length; i++) {
+                    var tr = '<tr>\n' +
+                        '                    <td>' + data[i].uid + '</td>\n' +
+                        '                    <td>' + data[i].username + '</td>\n' +
+                        '                    <td>' + data[i].name + '</td>\n' +
+                        '                    <td>' + data[i].role_name + '</td>\n' +
+                        '                    <td>' + data[i].role_desc + '</td>\n' +
+                        '<td><button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#update"><a onclick="loadRole('+data[i].uid+')">修改</a></button></td>' +
+                        '                </tr>';
+
+                    trs += tr;
+                }
+                $("#list").html(trs);
+//            var res = data.sort(sortRole);
+//            console.log(res);
+            });
+
+
+    });
+    function loadRole(uid){
+        $.post("findRoleByUidServlet",{uid:uid}, function (data) {
+            $("#uid").val(uid);
+            $("#username").html(data[0].username);
+            $("#name").html(data[0].name);
+//            $("#role").val(data[0].role_name);
+              $("#role").val(data[0].rid);
+        })
+
+    }
+
+
+    /*  function sortId(a, b) {
+          return b.uid - a.uid;
+      }
+      function sortRole(a,b){
+          return a.role_name<b.role_name ? 1:0;
+      }
+      function sortUsername(a,b){
+          return b.username < a.username;
+      }*/
+</script>
+<body>
+
+<div id="header"></div>
+
+<div class="container" style="float:right;margin-right:9%;" >
+    <div>
+        <div class="page-header">
+            <h1>
+                权限管理
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    为系统角色分配访问菜单...
+                </small>
+            </h1>
+        </div>
+        <form>
+            <table class="table table-bordered">
+
+                <thead>
+                <tr>
+                    <th>用户id</th>
+                    <th>用户名</th>
+                    <th>姓名</th>
+                    <th>角色</th>
+                    <th>角色描述</th>
+                    <th>修改角色</th>
+                </tr>
+                </thead>
+                <tbody id="list">
+                <tr>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#update"><a onclick="loadRole()">修改</a></button>
+                    </td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div class="modal  bs-example-modal-lg" id="update" tabindex="-1"
+     role="dialog" aria-labelledby="addModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form class="form-horizontal" action="updateRoleServlet" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addModalLabel">用户角色修改</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="uid" id="uid"/>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">
+                            用户名
+                        </label>
+                        <div class="col-md-6">
+                            <a class="col-md-9" id="username">username</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">
+                            姓名
+                        </label>
+                        <div class="col-md-6">
+                            <a class="col-md-8" id="name">name</a>
+                        </div>
+                    </div>
+                    <div class="space-4"></div>
+
+                    <div id="addFather">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label no-padding-right">
+                                角色
+                            </label>
+                            <div class="col-md-9">
+                                <select name="rid" class="col-md-8" id="role">
+
+                                    <option value="1">超级管理员(馆长)</option>
+                                    <option value="2">副馆长</option>
+                                    <option value="3">主任</option>
+                                    <option value="4">业务员</option>
+                                    <option value="5">普通用户</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-4"></div>
+                    </div>
+
+                   <!-- <div class="form-group">
+                        <label class="col-sm-3 control-label no-padding-right">
+                            部门描述：
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" name="ap_desc" class="col-sm-8" id="add_ap_desc">
+                        </div>
+                    </div>-->
+                    <div class="space-4"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

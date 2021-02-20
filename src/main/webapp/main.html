@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主界面</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <!--<link rel="stylesheet" type="text/css" href="css/common.css">-->
+    <link rel="stylesheet" type="text/css" href="css/search.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <link rel="icon" href="img/favicon.ico">
+    <!--<link rel="preload" href="css/bootstrap.min.css" as="style">-->
+</head>
+<style>
+
+
+    body {
+        background-color: #eeeeee;
+        /*background: url("1.png");*/
+    }
+
+ul{
+   list-style-type:none;
+}
+    table{
+        background-color: #ebebeb;
+        text-align: center;
+    }
+    th{
+        text-align: center;
+    }
+    .topic {
+        text-align: center;
+        margin-top: 1%;
+        margin-bottom: 1%;
+        font-size: 25px;
+    }
+
+    .user {
+        width: 50px;
+        line-height: 26px;
+        float: right;
+        color: #ac2925;
+
+    }
+
+    .ta {
+        border-collapse: collapse !important;
+        border: 1px solid #ddd;
+    }
+
+    .bookStyle {
+        color: #ff141a;
+    }
+
+    .quan {
+        width: 1180px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+    }
+
+    .see {
+        width: 890px;
+        float: left;
+    }
+
+    .status {
+        margin-left: 400px;
+
+        /*属性设置元素的左外边距*/
+    }
+
+    .hea {
+        background-color: #73c1ee;
+        font-weight: bold;
+        height: 40px;
+        line-height: 40px;
+        padding-left: 300px;
+        margin-bottom: 25px;
+    }
+
+    .image {
+        width: 200px;
+        height: 170px;
+        float: left;
+        padding: 5px;
+        margin-left: 10px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    .checkbox {
+
+        width: 20px;
+        height: 30px;
+        padding: 6px 12px;
+        font-size: 15px;
+        line-height: 1.42857143;
+        color: #c04733;
+        background-color: #92ffd3;
+        float: left;
+    }
+
+    .button {
+        float: right;
+        margin-right: 20px;
+        margin-bottom: 20px;
+
+    }
+
+    .hint {
+        float: left;
+        font-size: 20px;
+        margin-left: 300px;
+    }
+
+    .select_all {
+        float: left;
+        font-size: 20px;
+
+    }
+
+    .currPage {
+        background-color: #4E6EF2;
+    }
+    .site{
+        /*float:right;*/
+        /*width:88%;*/
+       /* margin-right: 0%;
+        margin-top: 0%;*/
+
+    }
+
+</style>
+<script src="js/getParameter.js"></script>
+<script>
+
+    /*$(function () {
+
+        var trs = '<table  class="table table-bordered">' + '<tr>' +
+            '<th>书名</th>' +
+            '<th>作者</th>' +
+            '<th>出版时间</th>' +
+            '<th>出版社</th>' +
+            '<th>分类</th>' +
+            '</tr>';
+        $.post("bookServlet", {}, function (data) {
+
+
+            for (var i = 0; i < data.length; i++) {
+
+                var tr =  '<tr>\n' +
+                    '        <td>' + data[i].name + '</td>\n' +
+                    '        <td>' + data[i].author + '</td>\n' +
+                    '        <td>' + data[i].pubDate + '</td>\n' +
+                    '        <td>' + data[i].pubHouse + '</td>\n' +
+                    '        <td>' + data[i].classify + '</td>\n' +
+
+                        '    </tr>' ;
+
+
+
+                trs += tr;
+            }
+           trs+= '</table>';
+            $("#book").html(trs);
+
+        });
+
+    });*/
+    $(function () {
+        $.get("header.html", function (data) {
+            $("#header").html(data);
+        });
+
+
+        var name = getParameter("name");
+        var author = getParameter("author");
+        if (name) {
+            //url解码
+            name = window.decodeURIComponent(name);
+        }
+        if (author) {
+            //url解码
+            author = window.decodeURIComponent(author);
+        }
+        load(1, name, author);
+
+        var flag = false;
+        $("#select_all").click(function () {
+            alert("s");
+//            var name = document.getElementsByName("bid");
+            var name = $("input[name='bid']");
+            for (var i = 0; i < name.length; i++) {
+                name[i].checked = !flag;
+            }
+            flag = !flag;
+        });
+
+        $("#delSelected").click(function () {
+
+            if (confirm("您确定删除所选项目")) {
+                var flag1 = false;
+                var bid = document.getElementsByName("bid");
+//                var bid = $("input[name='bid']");
+                for (var i = 0; i <= bid.length; i++) {
+                    if (bid[i].checked) {
+                        flag1 = true;
+                        break;
+                    }
+                }
+                if (flag1) {
+                    $("#book").submit();
+                }
+            }
+
+
+        });
+
+        $("#find").click(function () {
+            /*alert(location.host+location.pathname);
+            alert(location.pathname);*/
+            var a = location.host;
+            var b = location.pathname;
+            var bname = $("#bName").val();
+            var bauthor = $("#bAuthor").val();
+//            location.href="http://localhost:8080/bishe/test.html"+"?name="+bname+"&author="+bauthor;
+            location.href = "http://" + a + b + "?name=" + bname + "&author=" + bauthor;
+
+        });
+    });
+
+    function deleteBookById(bid) {
+
+        if (confirm("你确定要删除")) {
+            location.href = "deleteBookServlet?bid=" + bid;
+        }
+    }
+
+    function load(currentPage, name, author) {
+//避免解析为 null 使分页中的翻页出现bug
+        if (!name) {
+            name = '';
+        }
+        if (!author) {
+            author = '';
+        }
+        $.get("findBookServlet", {name: name, currentPage: currentPage, author: author}, function (data) {
+
+            $("#totalPage").html(data.totalPage);
+            $("#totalCount").html(data.totalCount);
+
+            var lis = "";
+
+            var firstPage = '<li onclick="javascipt:load( 1'+ ',\'' + name +'\''+ ',\'' + author +'\''+ ')"><a href="javascript:;">首页</a></li>';
+            var beforeNum = data.currentPage - 1;
+            if (beforeNum <= 0) {
+                beforeNum = 1;
+            }
+
+            var beforePage = '<li onclick="javascipt:load(' + beforeNum + ',\'' + name +'\''+ ',\'' + author +'\''+ ')"><a href="javascript:;">上页</a></li>';
+            lis += firstPage;
+            lis += beforePage;
+
+            var begin;
+            var end;
+
+            if (data.totalPage < 10) {
+                begin = 1;
+                end = data.totalPage;
+            }
+            else {
+                begin = data.currentPage - 5;
+                end = data.currentPage + 4;
+                if (begin < 1) {
+                    begin = 1;
+                    end = begin + 9;
+                }
+                if (end > data.totalPage) {
+                    end = data.totalPage;
+                    begin = end - 9;
+                }
+            }
+
+            for (var j = begin; j <= end; j++) {
+                var li;
+                if (data.currentPage == j) {//当前页
+
+                    li = '<li class="currPage" onclick="javascipt:load(' + j + ',\'' + name +'\''+ ',\'' + author +'\''+ ')"><a href="javascript:void(0)">' + j + '</a></li>'
+
+                }
+                else {
+                    li = '<li onclick="javascipt:load(' + j + ',\'' + name +'\''+ ',\'' + author +'\''+ ')"><a href="javascript:void(0)">' + j + '</a></li>'
+
+                }
+                lis += li;
+            }
+            var nextNum = Number(data.currentPage) + 1;
+            if (data.currentPage === data.totalPage) {
+                nextNum = data.totalPage;
+            }
+            var lastPage = '<li onclick="javascipt:load(' + data.totalPage + ',\'' + name +'\''+ ',\'' + author +'\''+ ')"><a href="javascript:;">末页</a></li>';
+            var nextPage = '<li onclick="javascipt:load(' + nextNum + ',\'' + name +'\''+ ',\'' + author +'\''+ ')"><a href="javascript:;">下页</a></li>';
+            lis += nextPage;
+            lis += lastPage;
+            $("#pageNum").html(lis);
+
+            var trs = '<table  class="table table-bordered">' +
+                '<tr>' +
+                '<th><div id="select_all"></div></th>' +
+                '<th>书名</th>' +
+                '<th>作者</th>' +
+                '<th>出版时间</th>' +
+                '<th>出版社</th>' +
+                '<th>分类</th>' +
+                '<th>操作</th>' +
+                '</tr>';
+            for (var i = 0; i < data.list.length; i++) {
+                var data1 = data.list;
+                var tr = '<tr>\n' + '<td><input type="checkbox" name="bid" value="' + data1[i].bid + '"></td>' +
+                    '        <td>' + '<a class="btn-link" href="book_detail.html?bid=' + data1[i].bid + '">' + data1[i].name + '</a></td>\n' +
+                    '        <td>' + data1[i].author + '</td>\n' +
+                    '        <td>' + data1[i].pubDate + '</td>\n' +
+                    '        <td>' + data1[i].pubHouse + '</td>\n' +
+                    '        <td>' + data1[i].classify + '</td>\n' +
+                    '<td><a class="btn btn-info btn-sm" href="update_book.html?bid=' + data1[i].bid + '">修改</a>\n' +
+                    //                    '                            <a class="btn btn-danger btn-sm" href="deleteBookServlet1?bid=' + data1[i].bid + '">删除</a>\n' +
+                    '                            <a class="btn btn-danger btn-sm" href="javascript:deleteBookById(' + data1[i].bid + ');">删除</a>\n' +
+                    '                        </td>' +
+                    '    </tr>';
+
+                trs += tr;
+            }
+            trs += '</table>';
+            $("#book").html(trs);
+
+        });
+    }
+
+
+</script>
+
+
+<body >
+
+<div id="header"></div>
+
+
+<div class="container site">
+
+
+    <h3 class="topic">图书信息</h3>
+    <div style="float: left;margin:5px;">
+        <form class="form-inline" action="" method="post">
+            <div class="form-group">
+                <label for="bName">书名</label>
+                <input type="text" name="name" class="form-control" id="bName">
+            </div>
+            <div class="form-group">
+                <label for="bAuthor">作者</label>
+                <input type="text" name="author" class="form-control" id="bAuthor">
+            </div>
+
+            <button type="button" id="find" class="btn btn-primary" href="#">查询</button>
+        </form>
+    </div>
+
+    <div style="float: right;margin:5px;">
+        <a href="add_book.html">
+            <button type="button" class="btn btn-primary">添加图书信息</button>
+        </a>
+        <a>
+            <button type="button" class="btn btn-danger" href="javascript:void(0);" id="delSelected">删除选中</button>
+        </a>
+    </div>
+
+    <form id="book" action="deleteBookServlet" method="post">
+        <table class="table table-bordered">
+            <tr>
+                <td>
+                    <input type="checkbox"></td>
+                <th>书名</th>
+                <th>作者</th>
+                <th>出版日期</th>
+                <th>出版社</th>
+                <th>分类</th>
+                <th>操作</th>
+            </tr>
+            <tr>
+                <td>ddd</td>
+                <td>ddd</td>
+                <td>ddd</td>
+                <td>dddd</td>
+            </tr>
+
+        </table>
+    </form>
+
+    <div class="pageNum">
+
+        <ul id="pageNum">
+            <li>首页</li>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>2</li>
+            <li>2</li>
+        </ul>共
+        <span id="totalPage">未知</span>页
+        <span id="totalCount">未知</span>条
+    </div>
+
+</div>
+</body>
+
+</html>
